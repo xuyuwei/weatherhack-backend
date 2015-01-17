@@ -26,7 +26,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 ## Yelp api integration with ruby
 gem 'yelp', require: 'yelp'
 
-
+gem 'httparty'
+gem 'certified'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -47,6 +48,6 @@ end
 gem 'responders', '~> 2.0' 
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-if RUBY_PLATFORM=~ /win32/ 
+#if RUBY_PLATFORM=~ /win32/ 
 	gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-end
+#end

@@ -19,7 +19,11 @@ module Api
 
 		# GET /api/{plural_resource_name}
 		def index
-			get_businesses_from_location(query_params[:city])
+			if (Place.where({:city => query_params[:city]}).first ==nil)
+
+				get_places_from_location(query_params[:city])
+			end
+
 
 		  plural_resource_name = "@#{resource_name.pluralize}"
 		  resources = resource_class.where(query_params)
@@ -47,14 +51,14 @@ module Api
 
       def place_params
       	#todo
-        params.require(:schedule).permit()
+        params.require(:place).permit(:name, :lng, :lat, :address, :place_id, :icon_url, :rating, :tags, :city)
       end
 
       def query_params
         # this assumes that an album belongs to an artist and has an :artist_id
         # allowing us to filter by this
         #todo
-        params.permit(:city)
+        params.permit(:city)#:name, :lng, :lat, :address, :place_id, :icon_url, :rating, :tags, :city)
       end
 
 
