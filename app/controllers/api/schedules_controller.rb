@@ -21,23 +21,23 @@ module Api
 		# GET /api/{plural_resource_name}
 		def index
 		  
-		  places= query_params["place_id"].split(",")
-		  puts places
-		  addressArray = []
-		  places.each do |p|
-		  	place = Place.where({:place_id => p}).first
-		  	if (place!=nil)
-		  		address=place.address
-		  		addressArray.append(address)
-		  	end
-		  end
-		  precip = .5
-		  date = "Sunday"
-		  dayNum = getDayNumber(date)
+		  # places= query_params["place_id"].split(",")
+		  # puts places
+		  # addressArray = []
+		  # places.each do |p|
+		  # 	place = Place.where({:place_id => p}).first
+		  # 	if (place!=nil)
+		  # 		address=place.address
+		  # 		addressArray.append(address)
+		  # 	end
+		  # end
+		  # precip = .5
+		  # date = "Sunday"
+		  # dayNum = getDayNumber(date)
 
-		  startTime = 800
-		  endTime = 1830
-		  plural_resource_name = "@#{resource_name.pluralize}"
+		  # startTime = 800
+		  # endTime = 1830
+		  # plural_resource_name = "@#{resource_name.pluralize}"
 		  resources = resource_class.where(query_params)
 		                            .page(page_params[:page])
 		                            .per(page_params[:page_size])
