@@ -25,6 +25,20 @@ module ApplicationHelper
 			puts tag
 
 		end
+		puts "Hello"
+	end
+
+	def is_precipitating(location)         
+
+		Wolfram.appid = "KWLWUW-LE66W8A5TK"
+
+		query = "precipitation #{location} next 12 hours"
+		result = Wolfram.fetch(query)
+		hash = Wolfram::HashPresenter.new(result).to_hash
+
+		pods = hash[:pods]
+		result = pods["Result"]
+		return result[0].split("\n").first != "no precipitation"
 	end
 
 	def get_places_from_location(location)
