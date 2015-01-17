@@ -4,7 +4,7 @@ gem 'kaminari'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -49,7 +49,27 @@ end
 gem 'responders', '~> 2.0' 
 gem 'wolfram'
 
+# Use Unicorn
+platforms :ruby do gem 'unicorn' end
+	
+group :development do
+  # Use Capistrano for deployment
+  gem 'capistrano', '3.1.0'
+  gem 'capistrano-rails', '~> 1.1.1'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rbenv', '~> 2.0'
+  gem 'capistrano-unicorn-nginx', '~> 2.0'
+  gem 'capistrano-postgresql', '~> 3.0'
+
+  gem 'sqlite3'
+end
+
+group :production do
+  gem 'pg'
+
+end
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 #if RUBY_PLATFORM=~ /win32/ 
-	gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+	#gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 #end
