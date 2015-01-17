@@ -1,7 +1,7 @@
-lock '3.3.5'
+lock '3.1.0'
 
 set :application, 'WeatherHack'
-set :repo_url, 'git@github.com:xuyuwei/weatherhack-backend.git'
+set :repo_url, 'https://kelleyb:Captainnemo1@github.com/xuyuwei/weatherhack-backend.git'
 
 # describe the rbenv environment we are deploying into
 set :rbenv_type, :user
@@ -11,7 +11,9 @@ set :rbenv_map_bins, %w{rake gem bundle ruby rails}
 
 # dirs we want symlinked to the shared folder
 # during deployment
-set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+
+set :bundle_binstubs, nil
 
 namespace :deploy do
 
