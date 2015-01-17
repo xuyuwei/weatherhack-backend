@@ -1,6 +1,5 @@
 module ApplicationHelper
 	require 'json'
-	
 	def get_businesses_from_location(location)
 		response = Yelp.client.search(location, { term: 'attraction' })
 
@@ -46,10 +45,10 @@ module ApplicationHelper
 		base_url="https://maps.googleapis.com/maps/api/place/textsearch/json?"
 		city = location.gsub(" ","%20")
 
-		response = HTTParty.get(base_url+"query=points+of+interest+in+"+city+"&key="+api_key)
+		response = HTTParty.get(base_url+"query=attractions+in+"+city+"&key="+api_key)
 		json_data = JSON.parse(response.body.to_s)
 		results_array = json_data["results"]
-
+		# scraper = Scrapix::GoogleImages.new
 		results_array.each do |place|
 			address = place["formatted_address"]
 			geometry = place["geometry"]
@@ -63,6 +62,11 @@ module ApplicationHelper
 			flag = false
 			tags =""
 			city = location
+			# scraper.query = name;
+			# scraper.total = 1;
+			# scraper.options = {safe:true}
+			# puts scraper.find
+
 			types.each do |t|
 				if (t!=nil)
 					tags+=t+"|"

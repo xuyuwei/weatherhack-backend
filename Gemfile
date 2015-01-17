@@ -28,6 +28,7 @@ gem 'yelp', require: 'yelp'
 
 gem 'httparty'
 gem 'certified'
+gem 'scrapix'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
