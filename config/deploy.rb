@@ -1,4 +1,4 @@
-lock '3.1.0'
+lock '3.3.5'
 
 set :application, 'WeatherHack'
 set :repo_url, 'git@github.com:xuyuwei/weatherhack-backend.git'
