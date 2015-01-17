@@ -23,6 +23,10 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+## Yelp api integration with ruby
+gem 'yelp', require: 'yelp'
+
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -40,5 +44,9 @@ group :development, :test do
   gem 'web-console', '~> 2.0'
 end
 
+gem 'responders', '~> 2.0' 
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+if RUBY_PLATFORM=~ /win32/ 
+	gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+end

@@ -3,7 +3,9 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
   namespace :api do
     resources :schedules
+    resources :places
   end
+
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
 

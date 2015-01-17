@@ -1,5 +1,5 @@
 module Api
-  class EventsController < Api::BaseController
+  class ScheduleController < Api::BaseController
   	def create
 		  set_resource(resource_class.new(resource_params))
 

@@ -1,5 +1,6 @@
 module Api
-  class EventsController < Api::BaseController
+  class PlacesController < Api::BaseController
+  	include ApplicationHelper
   	def create
 		  set_resource(resource_class.new(resource_params))
 
@@ -18,7 +19,8 @@ module Api
 
 		# GET /api/{plural_resource_name}
 		def index
-			
+			get_businesses_from_location(query_params[:city])
+
 		  plural_resource_name = "@#{resource_name.pluralize}"
 		  resources = resource_class.where(query_params)
 		                            .page(page_params[:page])
@@ -52,7 +54,9 @@ module Api
         # this assumes that an album belongs to an artist and has an :artist_id
         # allowing us to filter by this
         #todo
-        params.permit()
+        params.permit(:city)
       end
+
+
 	end
 end
