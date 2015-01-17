@@ -2,6 +2,10 @@ module Api
   class SchedulesController < Api::BaseController
   	include ScheduleHelper
   	include ApplicationHelper
+  	include CreatorHelper
+  	def initialize
+  		@all_schedules=[]
+  	end
   	def create
 		  set_resource(resource_class.new(resource_params))
 
@@ -21,29 +25,60 @@ module Api
 		# GET /api/{plural_resource_name}
 		def index
 		  
-		  # places= query_params["place_id"].split(",")
-		  # puts places
-		  # addressArray = []
-		  # places.each do |p|
-		  # 	place = Place.where({:place_id => p}).first
-		  # 	if (place!=nil)
-		  # 		address=place.address
-		  # 		addressArray.append(address)
-		  # 	end
-		  # end
-		  # precip = .5
-		  # date = "Sunday"
-		  # dayNum = getDayNumber(date)
+		  places= query_params["place_id"].split(",")
+		  
+		  addressArray = []
+		  idArray = []
+		  latArray = []
+		  lngArray = []
+		  nameArray =[]
+		  tagArray=[]
 
-		  # startTime = 800
-		  # endTime = 1830
-		  # plural_resource_name = "@#{resource_name.pluralize}"
+		  places.each do |p|
+		  	place = Place.where({:place_id => p}).first
+		  	if (place!=nil)
+		  		address=place.address
+		  		addressArray.push(address)
+		  		idArray.push(place.place_id)
+		  		latArray.push(place.lat)
+		  		lngArray.push(place.lng)
+		  		nameArray.push(place.name)
+		  		tagArray.push(place.tags)
+		  	end
+		  end
+		  # puts addressArray.inspect
+		  # puts idArray.inspect
+		  # puts latArray.inspect
+		  # puts lngArray.inspect
+		  # puts nameArray.inspect
+		  # puts tagArray.inspect
+		  precip = 0.4
+		  date =query_params["day"]
+		  dayNum = getDayNumber(date)
+		  puts dayNum.inspect
+		  startTime = query_params["start_time"].to_i
+		  endTime = query_params["end_time"].to_i
+		  puts date
+		  puts startTime
+		  puts endTime	
+		  been_to = Array.new(nameArray.length,false)
+		  getAllDistances(addressArray)
+		  getSchedules(@all_schedules, -1,nameArray,idArray,tagArray,been_to,[],precip,
+		  	startTime,endTime,dayNum)
+		
+		  @all_schedules.each do |sched|
+		  	puts sched
+		  	puts "\n"
+		  end
+		  
+		  plural_resource_name = "@#{resource_name.pluralize}"
 		  resources = resource_class.where(query_params)
 		                            .page(page_params[:page])
 		                            .per(page_params[:page_size])
 
 		  instance_variable_set(plural_resource_name, resources)
 		  respond_with instance_variable_get(plural_resource_name)
+		  
 		end
 
 		# GET /api/{plural_resource_name}/1
@@ -63,14 +98,14 @@ module Api
 
       def schedule_params
       	#todo
-        params.require(:schedule).permit()
+        params.require(:schedule).permit(:place_id,:day,:start_time,:end_time)
       end
 
       def query_params
         # this assumes that an album belongs to an artist and has an :artist_id
         # allowing us to filter by this
         #todo
-        params.permit(:place_id)
+        params.permit(:place_id,:day,:start_time,:end_time)
       end
 	end
 end
