@@ -92,6 +92,36 @@ module ApplicationHelper
 			end
 		end
 	end
+
+	def get_conditions_from_location(location)
+		require "json"
+		require 'httparty'
+
+		## I'm gonna assume we were given the location the same way it's handled elsewhere: with spaces between words.
+		## Don't want that here, so lets replace spaces with underscores.
+		location = location.gsub " ", "_"
+
+		url = "http://api.wunderground.com/api/cad80d94efd1b2f4/hourly/q/CA/#{location}.json"
+
+		response = HTTParty.get(url)
+		data = JSON.parse(response.body)
+
+		Condition.where(:city => location).each do |c|
+			c.delete
+		end
+
+		for i in 0..9
+			condition = Condition.new({
+				:hour => data["hourly_forecast"][i]["FCTTIME"]["hour"],
+				:condition => data["hourly_forecast"][i]["condition"],
+				:condition_url => data["hourly_forecast"][i]["icon_url"],
+				:city => location.gsub("_", " ")
+
+			})
+			condition.save
+
+		end
+	end
 	
 	
 end
