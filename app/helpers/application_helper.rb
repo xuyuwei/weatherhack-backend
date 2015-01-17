@@ -106,16 +106,21 @@ module ApplicationHelper
 		response = HTTParty.get(url)
 		data = JSON.parse(response.body)
 
-		ret = []
+		Condition.where(:city => location).each do |c|
+			c.delete
+		end
 
 		for i in 0..9
-			h = Hash.new
-			h["hour"] = data["hourly_forecast"][i]["FCTTIME"]["hour"]
-			h["condition"] = data["hourly_forecast"][i]["condition"]
-			h["condition_image_url"] = data["hourly_forecast"][i]["icon_url"]
-			ret.push(h)
+			condition = Condition.new({
+				:hour => data["hourly_forecast"][i]["FCTTIME"]["hour"],
+				:condition => data["hourly_forecast"][i]["condition"],
+				:condition_url => data["hourly_forecast"][i]["icon_url"],
+				:city => location.gsub("_", " ")
+
+			})
+			condition.save
+
 		end
-		return JSON.generate(ret)
 	end
 	
 	

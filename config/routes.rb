@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     resources :schedules
     resources :places
+    resources :conditions
   end
 
   # You can have the root of your site routed with "root"
