@@ -224,17 +224,16 @@ GEM
     uglifier (2.7.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
-<<<<<<< HEAD
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.6)
     unf_ext (0.0.6-x86-mingw32)
-=======
+
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
->>>>>>> ef8347d045276e555eecf4c099c5351654411adf
+
     web-console (2.0.0)
       activemodel (~> 4.0)
       binding_of_caller (>= 0.7.2)
