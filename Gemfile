@@ -45,6 +45,7 @@ group :development, :test do
 end
 
 gem 'responders', '~> 2.0' 
+gem 'wolfram'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 if RUBY_PLATFORM=~ /win32/ 

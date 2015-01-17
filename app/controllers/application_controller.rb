@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   require 'yelp'
+  require "wolfram"
 
   Yelp.client.configure do |config|
 	  config.consumer_key =  "VCQbpN-Rla_rzwTC96wmDw"
