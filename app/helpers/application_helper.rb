@@ -92,6 +92,31 @@ module ApplicationHelper
 			end
 		end
 	end
+
+	def get_conditions_from_location(location)
+		require "json"
+		require 'httparty'
+
+		## I'm gonna assume we were given the location the same way it's handled elsewhere: with spaces between words.
+		## Don't want that here, so lets replace spaces with underscores.
+		location = location.gsub " ", "_"
+
+		url = "http://api.wunderground.com/api/cad80d94efd1b2f4/hourly/q/CA/#{location}.json"
+
+		response = HTTParty.get(url)
+		data = JSON.parse(response.body)
+
+		ret = []
+
+		for i in 0..9
+			h = Hash.new
+			h["hour"] = data["hourly_forecast"][i]["FCTTIME"]["hour"]
+			h["condition"] = data["hourly_forecast"][i]["condition"]
+			h["condition_image_url"] = data["hourly_forecast"][i]["icon_url"]
+			ret.push(h)
+		end
+		return JSON.generate(ret)
+	end
 	
 	
 end
