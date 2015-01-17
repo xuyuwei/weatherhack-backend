@@ -48,6 +48,19 @@ end
 gem 'responders', '~> 2.0' 
 gem 'wolfram'
 
+# Use Unicorn
+platforms :ruby do gem 'unicorn' end
+	
+group :development do
+  # Use Capistrano for deployment
+  gem 'capistrano', '~> 3.1'
+  gem 'capistrano-rails', '~> 1.1.1'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rbenv', '~> 2.0'
+  gem 'capistrano-unicorn-nginx', '~> 2.0'
+  gem 'capistrano-postgresql', '~> 3.0'
+end
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 #if RUBY_PLATFORM=~ /win32/ 
 	gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
