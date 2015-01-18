@@ -3,7 +3,7 @@ module ApplicationHelper
 	def update_urls
 		(1..16).each do |i|
 			place = Place.where({:id => i}).first
-			place.icon_url = "https://weatherhack.herokuapp.com/public/sf/"+(i-1).to_s+".jpg"
+			place.icon_url = "https://weatherhack.herokuapp.com/sf/"+(i-1).to_s+".jpg"
 			place.save
 		end
 	end
@@ -51,7 +51,7 @@ module ApplicationHelper
 		if (result[0]==nil)
 			return false
 		end
-		
+
 		return result[0].split("\n").first != "no precipitation"
 	end
 
