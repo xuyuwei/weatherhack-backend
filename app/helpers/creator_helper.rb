@@ -4,7 +4,7 @@ module CreatorHelper
 	def getAllDistances(addresses,mode)
 		num = addresses.length
 		dists = Array.new(num)
-		api_key = "AIzaSyC8ia0RzrNk9ygYbJwbRO3nQ8KOu1RxfRY"
+		api_key = "AIzaSyA3x0L_n_C83YIRcCL8irw8-NDFWYQU1Uw"
 		base_url = "https://maps.googleapis.com/maps/api/directions/json?"	
 		(0..num-1).each do |i|
 			(i..num-1).each do |j|
@@ -75,7 +75,7 @@ module CreatorHelper
 	end
 
 	def getOperatingTimes(place_id,dayNum)
-		api_key = "AIzaSyC8ia0RzrNk9ygYbJwbRO3nQ8KOu1RxfRY"
+		api_key = "AIzaSyA3x0L_n_C83YIRcCL8irw8-NDFWYQU1Uw"
 		base_url = "https://maps.googleapis.com/maps/api/place/details/json?"
 		response = HTTParty.get(base_url+"placeid="+place_id+"&key="+api_key)
 		json_data = JSON.parse(response.body.to_s)
@@ -141,6 +141,7 @@ module CreatorHelper
 		flag = true;
 		(0..place_ids.length-1).each do |i|
 			if (been_to[i]==false)
+				puts 'hi'
 				the_tags = place_tags[i].split("|")
 				time_spent = getTime(the_tags)
 				operating_times = getOperatingTimes(place_ids[i],dayNum)
@@ -165,6 +166,7 @@ module CreatorHelper
 					real_start_time = start_time
 					possible_new_time =addTime(start_time,travel_time+time_spent)
 				end
+				puts precip
 				if ((open_time==0 &&close_time==0 &&precip==false) || (close_time>=possible_new_time && possible_new_time<=end_time))
 					flag = false;
 					new_sofar = Array.new
@@ -188,6 +190,7 @@ module CreatorHelper
 					pre_json = JSON[{"type" => "visit","name" => place_names[i], "address" => addresses[i], "place_id" => place_ids[i],:startTime => adjustTime(real_start_time), :duration => adjustLength(time_spent), :endTime => adjustTime(new_start_time) }.to_json]
 					
 					new_sofar.push(pre_json)
+					puts new_sofar
 					getSchedules(all_schedules,addresses, distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
 
 
@@ -196,6 +199,7 @@ module CreatorHelper
 			end
 		end
 		if (flag)
+			puts sofar
 			all_schedules.push(JSON[sofar.to_json])
 			if (all_schedules.length>=3)
 				return all_schedules
@@ -262,6 +266,7 @@ module CreatorHelper
 				end
 				prev_index = i;
 			end
+
 			all_schedules.push(JSON[sofar.to_json])
 		end
 	end

@@ -56,7 +56,7 @@ module ApplicationHelper
 	end
 
 	def get_places_from_location(location)
-		api_key= "AIzaSyC8ia0RzrNk9ygYbJwbRO3nQ8KOu1RxfRY"
+		api_key= "AIzaSyA3x0L_n_C83YIRcCL8irw8-NDFWYQU1Uw"
 		base_url="https://maps.googleapis.com/maps/api/place/textsearch/json?"
 		city = location.gsub(" ","%20")
 

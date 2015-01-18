@@ -48,8 +48,9 @@
 		  # 	precip,startTime.to_i,endTime.to_i,0)
 
 		  
-		 
+		 puts @all_schedules
 		  @all_schedules = @all_schedules.to_json
+		  
   	end
 
   end
