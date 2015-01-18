@@ -1,5 +1,13 @@
 module ApplicationHelper
 	require 'json'
+	def update_urls
+		(1..16).each do |i|
+			place = Place.where({:id => i}).first
+			place.icon_url = "https://weatherhack.herokuapp.com/public/sf/"+(i-1).to_s+".jpg"
+			place.save
+		end
+	end
+	
 	def get_businesses_from_location(location)
 		response = Yelp.client.search(location, { term: 'attraction' })
 

@@ -19,6 +19,7 @@ module Api
 
 		# GET /api/{plural_resource_name}
 		def index
+			update_urls
 			puts query_params[:city]
 
 			if (Place.where({:city => query_params[:city].downcase}).first ==nil)
