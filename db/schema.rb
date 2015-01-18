@@ -11,8 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20150117165818) do
+ActiveRecord::Schema.define(version: 20150117175357) do
 
   create_table "conditions", force: :cascade do |t|
     t.string "hour"
@@ -20,7 +19,6 @@ ActiveRecord::Schema.define(version: 20150117165818) do
     t.string "condition_url"
     t.string "city"
   end
-
 
   create_table "places", force: :cascade do |t|
     t.string   "place_id"

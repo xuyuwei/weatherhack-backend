@@ -54,7 +54,7 @@ module ApplicationHelper
 			geometry = place["geometry"]
 			lat = geometry["location"]["lat"]
 			lng = geometry["location"]["lng"]
-			icon_url = place["icon"]
+			icon_url = place["icon"].split("/").last
 			name = place["name"]
 			place_id = place["place_id"]
 			rating = place["rating"]
