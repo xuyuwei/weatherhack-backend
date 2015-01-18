@@ -168,7 +168,7 @@ module CreatorHelper
 						new_sofar.push(a)
 					end
 					if (travel_time!=0)
-						json_travel = JSON[{"travel" => {"time" => adjustLength(travel_time), "origin" =>[latArray[prev_index], lngArray[prev_index]],
+						json_travel = JSON[{"type" => "travel", "time" => adjustLength(travel_time), "origin" =>[latArray[prev_index], lngArray[prev_index]],
 							"destination" => [latArray[i], lngArray[i]]}}.to_json] 
 						new_sofar.push(json_travel)
 					end
@@ -180,7 +180,7 @@ module CreatorHelper
 					end
 					new_been_to[i]=true
 					
-					pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i],:startTime => adjustTime(real_start_time), :duration => adjustLength(time_spent), :endTime => adjustTime(new_start_time)} }.to_json]
+					pre_json = JSON[{"type" => "visit","name" => place_names[i], "place_id" => place_ids[i],:startTime => adjustTime(real_start_time), :duration => adjustLength(time_spent), :endTime => adjustTime(new_start_time)} }.to_json]
 					
 					new_sofar.push(pre_json)
 					getSchedules(all_schedules,distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
