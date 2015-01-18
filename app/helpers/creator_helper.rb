@@ -1,7 +1,7 @@
 	require 'json'
 module CreatorHelper
 
-	def getAllDistances(addresses)
+	def getAllDistances(addresses,mode)
 		num = addresses.length
 		dists = Array.new(num)
 		api_key = "AIzaSyC8ia0RzrNk9ygYbJwbRO3nQ8KOu1RxfRY"
@@ -15,7 +15,7 @@ module CreatorHelper
 					if (dists[j]==nil)
 						dists[j]=Array.new(num)
 					end
-					response = HTTParty.get(base_url+"origin="+ addresses[i].gsub(" ","%20") + "&destination=" + addresses[j].gsub(" ","%20") + "&key="+api_key)
+					response = HTTParty.get(base_url+"origin="+ addresses[i].gsub(" ","%20") + "&destination=" + addresses[j].gsub(" ","%20") + "&key="+api_key+"&mode="+mode)
 					json_data = JSON.parse(response.body.to_s)
 					
 					time = json_data["routes"][0]
@@ -44,7 +44,8 @@ module CreatorHelper
 	end
 	def addTime(start, added)
 		newtime = start+added
-		if (newtime %100>=60)
+		x = newtime;
+		if (x %100>=60)
 			newtime+=100
 			newtime-=60
 		end
@@ -133,7 +134,7 @@ module CreatorHelper
 			
 
 
-	def getSchedules(all_schedules,distances,latArray,lngArray, prev_index,place_names, place_ids,place_tags, been_to, sofar, precip, start_time, end_time,dayNum)
+	def getSchedules(all_schedules,addresses, distances,latArray,lngArray, prev_index,place_names, place_ids,place_tags, been_to, sofar, precip, start_time, end_time,dayNum)
 		flag = true;
 		(0..place_ids.length-1).each do |i|
 			if (been_to[i]==false)
@@ -146,7 +147,7 @@ module CreatorHelper
 				# puts "close_time "+close_time.to_s
 				# puts "tot_time "+addTime(start_time,time_spent).to_s
 				travel_time=0
-				if (prev_index!=-1)
+				if (prev_index!= -1)
 					travel_time = distances[i][prev_index]
 				end
 				if (travel_time==nil)
@@ -171,6 +172,7 @@ module CreatorHelper
 						json_travel = JSON[{"type" => "travel", "time" => adjustLength(travel_time), "origin" =>[latArray[prev_index], lngArray[prev_index]],
 							"destination" => [latArray[i], lngArray[i]]}.to_json] 
 						new_sofar.push(json_travel)
+						real_start_time+=travel_time
 					end
 					new_start_time =  possible_new_time
 
@@ -180,10 +182,10 @@ module CreatorHelper
 					end
 					new_been_to[i]=true
 					
-					pre_json = JSON[{"type" => "visit","name" => place_names[i], "place_id" => place_ids[i],:startTime => adjustTime(real_start_time), :duration => adjustLength(time_spent), :endTime => adjustTime(new_start_time) }.to_json]
+					pre_json = JSON[{"type" => "visit","name" => place_names[i], "address" => addresses[i], "place_id" => place_ids[i],:startTime => adjustTime(real_start_time), :duration => adjustLength(time_spent), :endTime => adjustTime(new_start_time) }.to_json]
 					
 					new_sofar.push(pre_json)
-					getSchedules(all_schedules,distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
+					getSchedules(all_schedules,addresses, distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
 
 
 				end
@@ -192,8 +194,8 @@ module CreatorHelper
 		end
 		if (flag)
 			all_schedules.push(JSON[sofar.to_json])
-			if (all_schedules.length>=12)
-				return 
+			if (all_schedules.length>=3)
+				return all_schedules
 			end
 		end
 

@@ -38,9 +38,9 @@
 
 		  been_to = Array.new(nameArray.length,false)
 		  puts addressArray
-		  distances = getAllDistances(addressArray)
+		  distances = getAllDistances(addressArray,"driving")
 		  puts distances
-		  getSchedules(@all_schedules,distances,latArray, lngArray,-1,nameArray,idArray,tagArray,been_to,[],precip,
+		  getSchedules(@all_schedules,addressArray, distances,latArray, lngArray,-1,nameArray,idArray,tagArray,been_to,[],precip,
 		  	startTime.to_i,endTime.to_i,dayNum)
 
 		  
