@@ -99,66 +99,82 @@ module CreatorHelper
 
 	
 	def getSchedules(all_schedules,distances,latArray,lngArray, prev_index,place_names, place_ids,place_tags, been_to, sofar, precip, start_time, end_time,dayNum)
-		flag = true;
-		(0..place_ids.length-1).each do |i|
-			if (been_to[i]==false)
-				the_tags = place_tags[i].split("|")
-				time_spent = getTime(the_tags)
-				operating_times = getOperatingTimes(place_ids[i],dayNum)
-				open_time=operating_times[0].to_i
-				close_time = operating_times[1].to_i
+		# flag = true;
+		# (0..place_ids.length-1).each do |i|
+		# 	if (been_to[i]==false)
+		# 		the_tags = place_tags[i].split("|")
+		# 		time_spent = getTime(the_tags)
+		# 		operating_times = getOperatingTimes(place_ids[i],dayNum)
+		# 		open_time=operating_times[0].to_i
+		# 		close_time = operating_times[1].to_i
 
-				# puts "close_time "+close_time.to_s
-				# puts "tot_time "+addTime(start_time,time_spent).to_s
-				travel_time=0
-				if (prev_index!=-1)
-					travel_time = distances[i][prev_index]
-				end
-				if (travel_time==nil)
-					travel_time=0
-				end
-				if (start_time<=open_time)
+		# 		# puts "close_time "+close_time.to_s
+		# 		# puts "tot_time "+addTime(start_time,time_spent).to_s
+		# 		travel_time=0
+		# 		if (prev_index!=-1)
+		# 			travel_time = distances[i][prev_index]
+		# 		end
+		# 		if (travel_time==nil)
+		# 			travel_time=0
+		# 		end
+		# 		if (start_time<=open_time)
 
-					possible_new_time =addTime(open_time,travel_time+time_spent)
+		# 			possible_new_time =addTime(open_time,travel_time+time_spent)
 
-				else
-					possible_new_time =addTime(start_time,travel_time+time_spent)
-				end
-				if ((open_time==0 &&close_time==0 &&precip<0.5) || (close_time>=possible_new_time && possible_new_time<=end_time))
-					flag = false;
-					new_sofar = Array.new
-					sofar.each do |a|
-						new_sofar.push(a)
-					end
-					if (travel_time!=0)
-						json_travel = JSON[{"travel" => {"time" => travel_time.to_s, "origin" =>[latArray[prev_index], longArray[prev_index]],
-							"destination" => [latArray[i], longArray[i]]}}.to_json] 
-						new_sofar.push(json_travel)
-					end
-					new_start_time =  possible_new_time
+		# 		else
+		# 			possible_new_time =addTime(start_time,travel_time+time_spent)
+		# 		end
+		# 		if ((open_time==0 &&close_time==0 &&precip<0.5) || (close_time>=possible_new_time && possible_new_time<=end_time))
+		# 			flag = false;
+		# 			new_sofar = Array.new
+		# 			sofar.each do |a|
+		# 				new_sofar.push(a)
+		# 			end
+		# 			if (travel_time!=0)
+		# 				json_travel = JSON[{"travel" => {"time" => travel_time.to_s, "origin" =>[latArray[prev_index], longArray[prev_index]],
+		# 					"destination" => [latArray[i], longArray[i]]}}.to_json] 
+		# 				new_sofar.push(json_travel)
+		# 			end
+		# 			new_start_time =  possible_new_time
 
-					new_been_to = Array.new(place_names.length)
-					(0..new_been_to.length-1).each do |n|
-						new_been_to[n]=been_to[n]
-					end
-					new_been_to[i]=true
+		# 			new_been_to = Array.new(place_names.length)
+		# 			(0..new_been_to.length-1).each do |n|
+		# 				new_been_to[n]=been_to[n]
+		# 			end
+		# 			new_been_to[i]=true
 					
-					pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i], :duration => time_spent.to_s, :curTime => new_start_time.to_s} }.to_json]
+		# 			pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i], :duration => time_spent.to_s, :curTime => new_start_time.to_s} }.to_json]
 					
-					new_sofar.push(pre_json)
-					getSchedules(all_schedules,distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
+		# 			new_sofar.push(pre_json)
+		# 			getSchedules(all_schedules,distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
 
 
-				end
+		# 		end
 
+		# 	end
+		# end
+		# if (flag)
+		# 	all_schedules.push(JSON[sofar.to_json])
+		# 	if (all_schedules.length>=12)
+		# 		return 
+		# 	end
+		# end
+		ret = []
+		for i in 0...place_ids
+			operating_times = getOperatingTimes(place_ids[i], dayNum)
+			openTime = operating_times.first.to_i
+			closeTime = operating_times.last.to_i
+			if openTime == closeTime == 0 and precip < 50
+				## We want to do outdoor times
+				pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i], :duration => time_spent.to_s, :curTime => new_start_time.to_s, :outdoors => true}, }.to_json]
+				ret.push(pre_json)
+			elsif openTime != closeTime
+				## indoors
+				pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i], :duration => time_spent.to_s, :curTime => new_start_time.to_s, :outdoors => false},  }.to_json]
+				ret.push(pre_json)
 			end
-		end
-		if (flag)
-			all_schedules.push(JSON[sofar.to_json])
-			if (all_schedules.length>=12)
-				return 
-			end
-		end
 
+		end
+		return ret
 	end
 end
