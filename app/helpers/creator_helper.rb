@@ -97,7 +97,42 @@ module CreatorHelper
 		return times
 	end
 
-	
+	def adjustTime(time)
+		
+		if (time>=1200)
+			new_time = time.to_s
+			time = time/100-12
+			new_time = time.to_s + ":" + new_time[2..3]+" pm"
+			return new_time
+		else
+			new_time = time%100
+			time = time/100
+			
+			if (new_time<10)
+				new_time = "0"+new_time.to_s
+			end
+			new_time = time.to_s+ ":" + new_time.to_s + " am"
+			return new_time
+		end
+	end
+	def adjustLength(time)
+		counter =0;
+		while (time>=100) do
+			counter+=1;
+			time-=100;
+		end
+		if (time==0)
+			return counter.to_s + " hr"
+		elsif (counter==0)
+			return time.to_s + " mins"
+		else
+			return counter.to_s + " hr and "+time.to_s+" mins"
+		end
+	end
+			
+			
+
+
 	def getSchedules(all_schedules,distances,latArray,lngArray, prev_index,place_names, place_ids,place_tags, been_to, sofar, precip, start_time, end_time,dayNum)
 		# flag = true;
 		# (0..place_ids.length-1).each do |i|
