@@ -1,7 +1,7 @@
 module Api
   class PlacesController < Api::BaseController
   	include ApplicationHelper
-  	def create
+  		def create
 		  set_resource(resource_class.new(resource_params))
 
 		  if get_resource.save
@@ -19,9 +19,11 @@ module Api
 
 		# GET /api/{plural_resource_name}
 		def index
-			if (Place.where({:city => query_params[:city]}).first ==nil)
+			puts query_params[:city]
 
-				get_places_from_location(query_params[:city])
+			if (Place.where({:city => query_params[:city].downcase}).first ==nil)
+
+				get_places_from_location('detroit')
 			end
 
 
@@ -47,7 +49,7 @@ module Api
 		    render json: get_resource.errors, status: :unprocessable_entity
 		  end
 		end
-		 private
+	
 
       def place_params
       	#todo
@@ -58,7 +60,7 @@ module Api
         # this assumes that an album belongs to an artist and has an :artist_id
         # allowing us to filter by this
         #todo
-        params.permit(:city)#:name, :lng, :lat, :address, :place_id, :icon_url, :rating, :tags, :city)
+        params.permit(:place,:name,:city)#:name, :lng, :lat, :address, :place_id, :icon_url, :rating, :tags, :city)
       end
 
 

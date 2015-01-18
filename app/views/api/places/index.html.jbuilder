@@ -1,3 +1,4 @@
+
 json.places @places do |place|
    json.name place.name
    json.place_id place.place_id
