@@ -97,7 +97,42 @@ module CreatorHelper
 		return times
 	end
 
-	
+	def adjustTime(time)
+		
+		if (time>=1200)
+			new_time = time.to_s
+			time = time/100-12
+			new_time = time.to_s + ":" + new_time[2..3]+" pm"
+			return new_time
+		else
+			new_time = time%100
+			time = time/100
+			
+			if (new_time<10)
+				new_time = "0"+new_time.to_s
+			end
+			new_time = time.to_s+ ":" + new_time.to_s + " am"
+			return new_time
+		end
+	end
+	def adjustLength(time)
+		counter =0;
+		while (time>=100) do
+			counter+=1;
+			time-=100;
+		end
+		if (time==0)
+			return counter.to_s + " hr"
+		elsif (counter==0)
+			return time.to_s + " mins"
+		else
+			return counter.to_s + " hr and "+time.to_s+" mins"
+		end
+	end
+			
+			
+
+
 	def getSchedules(all_schedules,distances,latArray,lngArray, prev_index,place_names, place_ids,place_tags, been_to, sofar, precip, start_time, end_time,dayNum)
 		flag = true;
 		(0..place_ids.length-1).each do |i|
@@ -117,22 +152,24 @@ module CreatorHelper
 				if (travel_time==nil)
 					travel_time=0
 				end
-				if (start_time<=open_time)
 
+				if (start_time<=open_time)
+					real_start_time = open_time
 					possible_new_time =addTime(open_time,travel_time+time_spent)
 
 				else
+					real_start_time = start_time
 					possible_new_time =addTime(start_time,travel_time+time_spent)
 				end
-				if ((open_time==0 &&close_time==0 &&precip<0.5) || (close_time>=possible_new_time && possible_new_time<=end_time))
+				if ((open_time==0 &&close_time==0 &&precip==false) || (close_time>=possible_new_time && possible_new_time<=end_time))
 					flag = false;
 					new_sofar = Array.new
 					sofar.each do |a|
 						new_sofar.push(a)
 					end
 					if (travel_time!=0)
-						json_travel = JSON[{"travel" => {"time" => travel_time.to_s, "origin" =>[latArray[prev_index], longArray[prev_index]],
-							"destination" => [latArray[i], longArray[i]]}}.to_json] 
+						json_travel = JSON[{"travel" => {"time" => adjustLength(travel_time), "origin" =>[latArray[prev_index], lngArray[prev_index]],
+							"destination" => [latArray[i], lngArray[i]]}}.to_json] 
 						new_sofar.push(json_travel)
 					end
 					new_start_time =  possible_new_time
@@ -143,7 +180,7 @@ module CreatorHelper
 					end
 					new_been_to[i]=true
 					
-					pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i], :duration => time_spent.to_s, :curTime => new_start_time.to_s} }.to_json]
+					pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i],:startTime => adjustTime(real_start_time), :duration => adjustLength(time_spent), :endTime => adjustTime(new_start_time)} }.to_json]
 					
 					new_sofar.push(pre_json)
 					getSchedules(all_schedules,distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
