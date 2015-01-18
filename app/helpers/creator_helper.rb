@@ -103,6 +103,9 @@ module CreatorHelper
 		if (time>=1200)
 			new_time = time.to_s
 			time = time/100-12
+			if (time==0)
+				time =12
+			end
 			new_time = time.to_s + ":" + new_time[2..3]+" pm"
 			return new_time
 		else
@@ -200,4 +203,67 @@ module CreatorHelper
 		end
 
 	end
+	def getFastSchedules(all_schedules,addresses,distances,latArray,lngArray,place_names,place_ids,place_tags,precip,start_time,end_time,dayNum)
+		puts latArray.length
+		array = Array.new(latArray.length){|i| i}
+		puts array
+		stime = start_time
+		3.times do |j|
+			array.shuffle
+			sofar = []
+			prev_index = -1
+			puts array
+			start_time = stime
+			array.each do |i|
+				the_tags = place_tags[i].split("|")
+				time_spent = getTime(the_tags)
+				operating_times = getOperatingTimes(place_ids[i],dayNum)
+				open_time=operating_times[0].to_i
+				close_time = operating_times[1].to_i
+
+				# puts "close_time "+close_time.to_s
+				# puts "tot_time "+addTime(start_time,time_spent).to_s
+				travel_time=0
+				if (prev_index!= -1)
+					travel_time = distances[i][prev_index]
+				end
+				if (travel_time==nil)
+					travel_time=0
+				end
+
+				if (start_time<=open_time)
+					real_start_time = open_time
+					possible_new_time =addTime(open_time,travel_time+time_spent)
+
+				else
+					real_start_time = start_time
+					possible_new_time =addTime(start_time,travel_time+time_spent)
+				end
+				puts "sofar"
+				puts sofar
+				if ((open_time==0 &&close_time==0 &&precip==false) || (close_time>=possible_new_time && possible_new_time<=end_time))
+					flag = false;
+					if (travel_time!=0)
+						json_travel = JSON[{"type" => "travel", "time" => adjustLength(travel_time), "origin" =>[latArray[prev_index], lngArray[prev_index]],
+							"destination" => [latArray[i], lngArray[i]]}.to_json] 
+						sofar.push(json_travel)
+						real_start_time+=travel_time
+					end
+					new_start_time =  possible_new_time
+
+					
+					
+					
+					pre_json = JSON[{"type" => "visit","name" => place_names[i], "address" => addresses[i], "place_id" => place_ids[i],:startTime => adjustTime(real_start_time), :duration => adjustLength(time_spent), :endTime => adjustTime(new_start_time) }.to_json]
+					
+					sofar.push(pre_json)
+
+					start_time = new_start_time
+				end
+				prev_index = i;
+			end
+			all_schedules.push(JSON[sofar.to_json])
+		end
+	end
+
 end

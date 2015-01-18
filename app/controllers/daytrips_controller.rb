@@ -40,8 +40,12 @@
 		  puts addressArray
 		  distances = getAllDistances(addressArray,"driving")
 		  puts distances
-		  getSchedules(@all_schedules,addressArray, distances,latArray, lngArray,-1,nameArray,idArray,tagArray,been_to,[],precip,
-		  	startTime.to_i,endTime.to_i,dayNum)
+		  getSchedules(@all_schedules,addressArray, distances,
+		  	latArray,lngArray, -1,nameArray, idArray,tagArray, 
+		  	been_to, [], precip, startTime.to_i,endTime.to_i,dayNum)
+		  # getFastSchedules(@all_schedules,addressArray, distances,
+		  # 	latArray, lngArray,nameArray,idArray,tagArray,
+		  # 	precip,startTime.to_i,endTime.to_i,0)
 
 		  
 		 
