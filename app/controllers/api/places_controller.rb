@@ -24,7 +24,7 @@ module Api
 
 			if (Place.where({:city => query_params[:city].downcase}).first ==nil)
 
-				get_places_from_location('detroit')
+				get_places_from_location(query_params[:city])
 			end
 
 
