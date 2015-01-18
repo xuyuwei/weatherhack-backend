@@ -7,7 +7,7 @@ module Api
   		@all_schedules=[]
   	end
   	def create
-		  set_resource(resource_class.new(resource_params))
+		set_resource(resource_class.new(resource_params))
 
 		  if get_resource.save
 		    render :show, status: :created
@@ -25,7 +25,7 @@ module Api
 		# GET /api/{plural_resource_name}
 		def index
 		  
-		  places= query_params["place_id"].split(",")
+		  places= query_params[:place_id].split(",")
 		  
 		  addressArray = []
 		  idArray = []
@@ -53,24 +53,23 @@ module Api
 		  # puts nameArray.inspect
 		  # puts tagArray.inspect
 		  precip = 0.4
-		  date =query_params["day"]
+		  date = query_params[:day]
 		  dayNum = getDayNumber(date)
 		  puts dayNum.inspect
-		  startTime = query_params["start_time"].to_i
-		  endTime = query_params["end_time"].to_i
+		  startTime = query_params[:start_time]
+		  endTime = query_params[:end_time]
 		  puts date
 		  puts startTime
 		  puts endTime	
 		  been_to = Array.new(nameArray.length,false)
 		  getAllDistances(addressArray)
-		  getSchedules(@all_schedules, -1,nameArray,idArray,tagArray,been_to,[],precip,
-		  	startTime,endTime,dayNum)
-		
-		  @all_schedules.each do |sched|
-		  	puts sched
-		  	puts "\n"
-		  end
+
+		  schedules = get(-1,nameArray,idArray,tagArray,been_to,[],precip,
+		  	startTime.to_i,endTime.to_i,dayNum)
+
+		  puts schedules		  #storeSchedule(query_params[:place_id],dayNum,startTime,endTime,schedules)
 		  
+
 		  plural_resource_name = "@#{resource_name.pluralize}"
 		  resources = resource_class.where(query_params)
 		                            .page(page_params[:page])
@@ -94,7 +93,7 @@ module Api
 		    render json: get_resource.errors, status: :unprocessable_entity
 		  end
 		end
-		 private
+
 
       def schedule_params
       	#todo

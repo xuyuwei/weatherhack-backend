@@ -1,11 +1,10 @@
-module CreatorHelper
 	require 'json'
-	@all_schedules = []
-	@distances = []
+module CreatorHelper
+
 	def getAllDistances(addresses)
 		num = addresses.length
 		dists = Array.new(num)
-		api_key = "AIzaSyC2HDpSzn-JhnA6cgIzBcaCDSPKV2HJ_wY"
+		api_key = "AIzaSyC8ia0RzrNk9ygYbJwbRO3nQ8KOu1RxfRY"
 		base_url = "https://maps.googleapis.com/maps/api/directions/json?"	
 		(0..num-1).each do |i|
 			(i..num-1).each do |j|
@@ -19,14 +18,21 @@ module CreatorHelper
 					response = HTTParty.get(base_url+"origin="+ addresses[i].gsub(" ","%20") + "&destination=" + addresses[j].gsub(" ","%20") + "&key="+api_key)
 					json_data = JSON.parse(response.body.to_s)
 					
-					time = json_data["routes"][0]["legs"][0]["duration"]["text"]
-					time = parseTime(time)
+					time = json_data["routes"][0]
+					if (time!=nil)
+						time = time["legs"][0]
+					end
+					if (time!=nil)
+						time = time["duration"]["text"]
+						time = parseTime(time)
+					end
+
 					dists[i][j]=time
 					dists[j][i]=time
 				end
 			end
 		end
-		@distances = dists
+		return dists
 	end
 	def parseTime(time)
 		array = time.split(" ")
@@ -68,49 +74,48 @@ module CreatorHelper
 	end
 
 	def getOperatingTimes(place_id,dayNum)
-		api_key = "AIzaSyC2HDpSzn-JhnA6cgIzBcaCDSPKV2HJ_wY"
+		api_key = "AIzaSyC8ia0RzrNk9ygYbJwbRO3nQ8KOu1RxfRY"
 		base_url = "https://maps.googleapis.com/maps/api/place/details/json?"
 		response = HTTParty.get(base_url+"placeid="+place_id+"&key="+api_key)
 		json_data = JSON.parse(response.body.to_s)
 		result = json_data["result"]
-		opening_hours = result["opening_hours"]
-		if (opening_hours!=nil && opening_hours.length>0)
-			periods = opening_hours["periods"]
-			open = periods[dayNum]["open"]["time"]
-			puts open
-			close = periods[dayNum]["close"]["time"]
+		if (result!=nil)
+			opening_hours = result["opening_hours"]
+			if (opening_hours!=nil && opening_hours.length>0)
+				periods = opening_hours["periods"]
+				open = periods[dayNum]["open"]["time"]
+				close = periods[dayNum]["close"]["time"]
+			else
+				open = 0;
+				close = 0;
+			end
+			times = [open, close]
 		else
-			open = 0;
-			close = 0;
+			times = [0,0]
 		end
-		times = [open, close]
+		
 		return times
 	end
+
 	
-	# puts @distances
-	# place_names = ["Aquarium of the Bay","de Young Museum","San Francisco Visitor Information Center"]
-
-	# place_ids = ["ChIJ9UMKePyAhYAR0qMWDYjn0aM","ChIJI7NivpmAhYARSuRPlbbn_2w",
-	# "ChIJ6-oK6YWAhYAR6hpLtB5vsv4"]
-
-	# place_tags = ["aquarium|establishment","museum|establishment","establishment"]
-	# @all_schedules=[]
-	def getSchedules(all_schedules, prev_index,place_names, place_ids,place_tags, been_to, sofar, precip, start_time, end_time,dayNum)
+	def getSchedules(all_schedules,distances,latArray,lngArray, prev_index,place_names, place_ids,place_tags, been_to, sofar, precip, start_time, end_time,dayNum)
 		flag = true;
 		(0..place_ids.length-1).each do |i|
 			if (been_to[i]==false)
 				the_tags = place_tags[i].split("|")
-				puts the_tags
 				time_spent = getTime(the_tags)
 				operating_times = getOperatingTimes(place_ids[i],dayNum)
 				open_time=operating_times[0].to_i
 				close_time = operating_times[1].to_i
 
-				puts "close_time "+close_time.to_s
-				puts "tot_time "+addTime(start_time,time_spent).to_s
+				# puts "close_time "+close_time.to_s
+				# puts "tot_time "+addTime(start_time,time_spent).to_s
 				travel_time=0
 				if (prev_index!=-1)
-					travel_time = @distances[i][prev_index]
+					travel_time = distances[i][prev_index]
+				end
+				if (travel_time==nil)
+					travel_time=0
 				end
 				if (start_time<=open_time)
 
@@ -126,7 +131,8 @@ module CreatorHelper
 						new_sofar.push(a)
 					end
 					if (travel_time!=0)
-						json_travel = '{"travel": {"time": ' +travel_time.to_s+ '}}'
+						json_travel = JSON[{"travel" => {"time" => travel_time.to_s, "origin" =>[latArray[prev_index], longArray[prev_index]],
+							"destination" => [latArray[i], longArray[i]]}}.to_json] 
 						new_sofar.push(json_travel)
 					end
 					new_start_time =  possible_new_time
@@ -136,11 +142,11 @@ module CreatorHelper
 						new_been_to[n]=been_to[n]
 					end
 					new_been_to[i]=true
-					puts new_been_to.inspect
-					pre_json = '{"visit": {"name": '+place_names[i]+ ', "place_id": '+place_ids[i]+ ', "duration": ' + time_spent.to_s+ ', "curTime": '+new_start_time.to_s+'}}'
+					
+					pre_json = JSON[{"visit" => {"name" => place_names[i], "place_id" => place_ids[i], :duration => time_spent.to_s, :curTime => new_start_time.to_s} }.to_json]
 					
 					new_sofar.push(pre_json)
-					getSchedules(all_schedules, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
+					getSchedules(all_schedules,distances,latArray,lngArray, i,place_names,place_ids,place_tags,new_been_to,new_sofar,precip,new_start_time,end_time,dayNum)
 
 
 				end
@@ -148,9 +154,9 @@ module CreatorHelper
 			end
 		end
 		if (flag)
-			all_schedules.push(sofar)
+			all_schedules.push(JSON[sofar.to_json])
 			if (all_schedules.length>=12)
-				return all_schedules
+				return 
 			end
 		end
 

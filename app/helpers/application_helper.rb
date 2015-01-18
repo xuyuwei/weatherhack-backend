@@ -41,7 +41,7 @@ module ApplicationHelper
 	end
 
 	def get_places_from_location(location)
-		api_key= "AIzaSyC2HDpSzn-JhnA6cgIzBcaCDSPKV2HJ_wY"
+		api_key= "AIzaSyC8ia0RzrNk9ygYbJwbRO3nQ8KOu1RxfRY"
 		base_url="https://maps.googleapis.com/maps/api/place/textsearch/json?"
 		city = location.gsub(" ","%20")
 
@@ -50,6 +50,7 @@ module ApplicationHelper
 		results_array = json_data["results"]
 		# scraper = Scrapix::GoogleImages.new
 		results_array.each do |place|
+			puts 'sajajfhfjahashfjafhajasfj'
 			address = place["formatted_address"]
 			geometry = place["geometry"]
 			lat = geometry["location"]["lat"]
@@ -76,6 +77,8 @@ module ApplicationHelper
 				end
 			end
 			tags=tags[0..tags.length-2]
+
+
 			if (!flag)
 				place = Place.new({
 					:address => address,
@@ -88,7 +91,8 @@ module ApplicationHelper
 					:city => location,
 					:tags => tags
 					})
-				place.save
+				puts place.save
+
 			end
 		end
 	end

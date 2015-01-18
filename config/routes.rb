@@ -5,7 +5,10 @@ Rails.application.routes.draw do
     resources :schedules
     resources :places
     resources :conditions
+    resources :events
+
   end
+  resources :daytrips
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
