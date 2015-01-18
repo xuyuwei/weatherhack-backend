@@ -45,6 +45,13 @@ module ApplicationHelper
 
 		pods = hash[:pods]
 		result = pods["Result"]
+		if (result==nil)
+			return false
+		end
+		if (result[0]==nil)
+			return false
+		end
+		
 		return result[0].split("\n").first != "no precipitation"
 	end
 
