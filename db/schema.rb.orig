@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
+ActiveRecord::Schema.define(version: 20150117175357) do
+=======
 ActiveRecord::Schema.define(version: 20150117214113) do
+>>>>>>> 143b09bf5e180bacede5a220666943b8e8e1345e
 
   create_table "conditions", force: :cascade do |t|
     t.string "hour"
