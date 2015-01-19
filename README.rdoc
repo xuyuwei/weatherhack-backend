@@ -5,4 +5,5 @@ of APIs that the front end can call to. It is written in Ruby using the Ruby on 
 Wolfram Alpha and Weather Underground APIs.
 
 View the front end repo here: https://github.com/zsniper/FitTrip
+
 View the Challenge Post here: http://challengepost.com/software/fittrip-mw11c
