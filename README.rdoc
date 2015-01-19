@@ -1,28 +1,8 @@
-== README
+=== Fit Trip
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is the back end for the Fit Trip app that was created at MHacks V. The back end is done in Ruby and primarily consists
+of APIs that the front end can call to. It is written in Ruby using the Ruby on Rails framework and makes calls to Google Places,
+Wolfram Alpha and Weather Underground APIs.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+View the front end repo here: https://github.com/zsniper/FitTrip
+View the Challenge Post here: http://challengepost.com/software/fittrip-mw11c
